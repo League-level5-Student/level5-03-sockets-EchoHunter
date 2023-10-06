@@ -15,7 +15,7 @@ public class ClientGreeter {
 	   DataInputStream dIS;
 	   try {
 		 ipAdd = InetAddress.getLocalHost().getHostAddress();
-	     servPortNum = 7171;
+	     servPortNum = 8080;
 	     s = new Socket(ipAdd, servPortNum);
 	     dOS = new DataOutputStream(s.getOutputStream());
 	     dIS = new DataInputStream(s.getInputStream());
