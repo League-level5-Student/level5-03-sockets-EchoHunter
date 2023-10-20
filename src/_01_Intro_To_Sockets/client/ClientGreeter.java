@@ -20,7 +20,7 @@ public class ClientGreeter {
 	     dOS = new DataOutputStream(s.getOutputStream());
 	     dIS = new DataInputStream(s.getInputStream());
 	     dOS.writeUTF("Hola World");
-	     dIS.readUTF();
+	    System.out.println(dIS.readUTF());
 	     s.close();
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
