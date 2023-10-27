@@ -37,4 +37,15 @@ public class ChatClient {
 			e.printStackTrace();
 		}
 	}
+	
+	public void sendText(String text) {
+		try {
+			if(os != null) {
+				os.writeObject(text);
+				os.flush();
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
 }

@@ -17,9 +17,9 @@ public class ChatServer extends Thread {
 	private ObjectInputStream oIS;
 	private int portNum;
 
-	ChatServer() throws IOException {
-		String pnum = JOptionPane.showInputDialog("Input chosen port number");
-		portNum = Integer.parseInt(pnum);
+	public ChatServer(int pnum) throws IOException {
+		
+		portNum = pnum;
 		serSock = new ServerSocket(portNum);
 	}
 
@@ -47,6 +47,30 @@ public class ChatServer extends Thread {
 	}
 	public int getPort() {
 		return portNum;
+	}
+	public void sendText(String text) {
+		try {
+			if(oOS!=null) {
+			oOS.writeObject(text);
+			oOS.flush();
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	public String getText() {
+		try {
+			if(oIS != null) {
+				return (String) oIS.readObject();
+			}
+		}catch(IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }
