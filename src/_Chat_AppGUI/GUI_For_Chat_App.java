@@ -11,6 +11,7 @@ import javax.swing.JTextField;
 
 import _00_Click_Chat.networking.Client;
 import _00_Click_Chat.networking.Server;
+import _Chat_App.client.ChatClient;
 import _Chat_App.server.ChatServer;
 
 public class GUI_For_Chat_App implements KeyListener {
@@ -21,6 +22,8 @@ public class GUI_For_Chat_App implements KeyListener {
 	JTextField outputTypeBox;
 	Server server;
 	Client client;
+	ChatServer cServ;
+	ChatClient cClien;
 	int response;
 	GUI_For_Chat_App(){
 		
@@ -34,11 +37,14 @@ public class GUI_For_Chat_App implements KeyListener {
 		
 		frame.addKeyListener(this);
 		
+		panel.add(inputTextBox);
+		panel.add(outputTypeBox);
+		frame.add(panel);
 		 response = JOptionPane.showConfirmDialog(null,"Would you like to host a server?", "Choices: ", JOptionPane.YES_NO_OPTION);
 		if(response == JOptionPane.YES_OPTION) {
 			server = new Server(Integer.parseInt(JOptionPane.showInputDialog("Enter your chosen port number")));
 			try {
-				ChatServer c = new ChatServer(server.getPort());
+				cServ = new ChatServer(server.getPort());
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -49,21 +55,26 @@ public class GUI_For_Chat_App implements KeyListener {
 			String ipStr = JOptionPane.showInputDialog("Enter the IP Address");
 			String prtStr = JOptionPane.showInputDialog("Enter the port number");
 			client = new Client(ipStr, Integer.parseInt(prtStr));
-			
+			cClien = new ChatClient(Integer.parseInt(prtStr), ipStr);
+			inputTextBox.setText(cClien.inputs.toString());
 		}
+		frame.setVisible(true);
+		
 	}
 	private void sendInput(){
 		if(response == JOptionPane.YES_OPTION) {
-			inputTextBox.getText();
+			cServ.sendText(inputTextBox.getText()+ "\n");
+			inputTextBox.setText("");
 		} else if(response == JOptionPane.NO_OPTION) {
-			
+			cClien.sendText(inputTextBox.getText());
+			inputTextBox.setText("");
 		}
 	}
 	@Override
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
 		if(e.getKeyCode() == 13) {
-			
+			sendInput();
 		}
 	}
 

@@ -5,6 +5,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+
+import javax.swing.JOptionPane;
 
 public class ChatClient {
 	private int port;
@@ -14,13 +17,15 @@ public class ChatClient {
 	
 	ObjectOutputStream os;
 	ObjectInputStream is;
+	public ArrayList<String> inputs;
 	
-	ChatClient(int port, String ip){
+	public ChatClient(int port, String ip){
 		this.port = port;
 		this.ip = ip;
 	}
 	
 	public void run() {
+		inputs = new ArrayList<String>();
 		try {
 			sockConnect = new Socket(ip,port);
 			
@@ -35,6 +40,14 @@ public class ChatClient {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		while (sockConnect.isConnected()) {
+			try {
+				inputs.add((String) is.readObject());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
