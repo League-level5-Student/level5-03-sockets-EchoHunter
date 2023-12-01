@@ -7,6 +7,7 @@ import java.io.IOException;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import _00_Click_Chat.networking.Client;
@@ -18,7 +19,7 @@ public class GUI_For_Chat_App implements KeyListener {
 	
 	JFrame frame;
 	JPanel panel;
-	JTextField inputTextBox;
+	JTextArea inputTextBox;
 	JTextField outputTypeBox;
 	Server server;
 	Client client;
@@ -31,10 +32,9 @@ public class GUI_For_Chat_App implements KeyListener {
 	public void runGUI (){
 		frame = new JFrame();
 		panel = new JPanel();
-		inputTextBox = new JTextField();
+		inputTextBox = new JTextArea(20,20);
 		inputTextBox.setEditable(false);
-		outputTypeBox = new JTextField();
-		
+		outputTypeBox = new JTextField(20);
 		frame.addKeyListener(this);
 		
 		panel.add(inputTextBox);
@@ -50,14 +50,19 @@ public class GUI_For_Chat_App implements KeyListener {
 				e.printStackTrace();
 			}
 			JOptionPane.showMessageDialog(null, "Server started at: " + server.getIPAddress() + "\nPort: " + server.getPort());
-			
+			while(cServ.isAlive()) {
+			inputTextBox.append(cServ.getText());
+			}
 		}else {
 			String ipStr = JOptionPane.showInputDialog("Enter the IP Address");
 			String prtStr = JOptionPane.showInputDialog("Enter the port number");
 			client = new Client(ipStr, Integer.parseInt(prtStr));
 			cClien = new ChatClient(Integer.parseInt(prtStr), ipStr);
-			inputTextBox.setText(cClien.inputs.toString());
+				while(cClien.getConnected()) {
+				inputTextBox.append(cClien.getText());
+				}
 		}
+		frame.pack();
 		frame.setVisible(true);
 		
 	}

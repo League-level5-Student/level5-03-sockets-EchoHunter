@@ -41,13 +41,18 @@ public class ChatClient {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		while (sockConnect.isConnected()) {
-			try {
+		try {
+		while (!sockConnect.isClosed()) {
+			if(sockConnect.isConnected() && is.readObject()!= null) {
+			
 				inputs.add((String) is.readObject());
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			
 			}
+		}
+		}
+		catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
@@ -60,5 +65,24 @@ public class ChatClient {
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
+	}
+	public String getText() {
+		try {
+			if(is != null) {
+				return (String) is.readObject();
+			}
+		}catch(IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	public boolean getConnected() {
+		if(sockConnect != null && sockConnect.isConnected()) {
+			return true;
+		}
+		return false;
 	}
 }

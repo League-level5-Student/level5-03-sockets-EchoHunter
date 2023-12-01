@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
@@ -16,6 +17,7 @@ public class ChatServer extends Thread {
 	private ObjectOutputStream oOS;
 	private ObjectInputStream oIS;
 	private int portNum;
+	public ArrayList<String> inputs;
 
 	public ChatServer(int pnum) throws IOException {
 		
@@ -24,6 +26,7 @@ public class ChatServer extends Thread {
 	}
 
 	public void run() {
+		inputs = new ArrayList<String>();
 		try {
 			sock = serSock.accept();
 
@@ -31,10 +34,19 @@ public class ChatServer extends Thread {
 			oIS = new ObjectInputStream(sock.getInputStream());
 
 			oOS.flush();
+			while(!sock.isClosed()){
+				if(sock.isConnected() && oIS.readObject() != null) {
+				inputs.add((String) oIS.readObject());
+				}
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		
 
 	}
 
