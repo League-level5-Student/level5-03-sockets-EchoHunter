@@ -7,33 +7,34 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-import javax.swing.JOptionPane;
+import _Chat_AppGUI.GUI_For_Chat_App;
 
 public class ChatClient {
 	private int port;
 	private String ip;
-	
+
 	Socket sockConnect;
-	
+
 	ObjectOutputStream os;
 	ObjectInputStream is;
-	public ArrayList<String> inputs;
-	
-	public ChatClient(int port, String ip){
+	GUI_For_Chat_App gui;
+
+	public ChatClient(int port, String ip, GUI_For_Chat_App gui) {
 		this.port = port;
 		this.ip = ip;
+		this.gui = gui;
 	}
-	
+
 	public void run() {
-		inputs = new ArrayList<String>();
+
 		try {
-			sockConnect = new Socket(ip,port);
-			
+			sockConnect = new Socket(ip, port);
+
 			os = new ObjectOutputStream(sockConnect.getOutputStream());
 			is = new ObjectInputStream(sockConnect.getInputStream());
-			
+
 			os.flush();
-			
+
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -42,36 +43,35 @@ public class ChatClient {
 			e.printStackTrace();
 		}
 		try {
-		while (!sockConnect.isClosed()) {
-			if(sockConnect.isConnected() && is.readObject()!= null) {
-			
-				inputs.add((String) is.readObject());
-			
+			while (!sockConnect.isClosed()) {
+				if (sockConnect.isConnected() && is.readObject() != null) {
+					gui.textBoxAdd("Server: " + (String) is.readObject() + "\n");
+				}
 			}
-		}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void sendText(String text) {
 		try {
-			if(os != null) {
+			if (os != null) {
 				os.writeObject(text);
+				gui.textBoxAdd(text);
 				os.flush();
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
 	}
+
 	public String getText() {
 		try {
-			if(is != null) {
+			if (is != null) {
 				return (String) is.readObject();
 			}
-		}catch(IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -79,8 +79,9 @@ public class ChatClient {
 		}
 		return null;
 	}
+
 	public boolean getConnected() {
-		if(sockConnect != null && sockConnect.isConnected()) {
+		if (sockConnect != null && sockConnect.isConnected()) {
 			return true;
 		}
 		return false;

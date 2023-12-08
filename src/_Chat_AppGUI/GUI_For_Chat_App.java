@@ -1,5 +1,6 @@
 package _Chat_AppGUI;
 
+import java.awt.Event;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
@@ -35,7 +36,7 @@ public class GUI_For_Chat_App implements KeyListener {
 		inputTextBox = new JTextArea(20,20);
 		inputTextBox.setEditable(false);
 		outputTypeBox = new JTextField(20);
-		frame.addKeyListener(this);
+		outputTypeBox.addKeyListener(this);
 		
 		panel.add(inputTextBox);
 		panel.add(outputTypeBox);
@@ -44,43 +45,44 @@ public class GUI_For_Chat_App implements KeyListener {
 		if(response == JOptionPane.YES_OPTION) {
 			server = new Server(Integer.parseInt(JOptionPane.showInputDialog("Enter your chosen port number")));
 			try {
-				cServ = new ChatServer(server.getPort());
+				cServ = new ChatServer(server.getPort(), this);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			JOptionPane.showMessageDialog(null, "Server started at: " + server.getIPAddress() + "\nPort: " + server.getPort());
-			while(cServ.isAlive()) {
-			inputTextBox.append(cServ.getText());
-			}
+			
 		}else {
-			String ipStr = JOptionPane.showInputDialog("Enter the IP Address");
-			String prtStr = JOptionPane.showInputDialog("Enter the port number");
+			String ipStr = "192.168.1.220"; //= JOptionPane.showInputDialog("Enter the IP Address");
+			String prtStr = "8080";//JOptionPane.showInputDialog("Enter the port number");
 			client = new Client(ipStr, Integer.parseInt(prtStr));
-			cClien = new ChatClient(Integer.parseInt(prtStr), ipStr);
-				while(cClien.getConnected()) {
-				inputTextBox.append(cClien.getText());
-				}
+			cClien = new ChatClient(Integer.parseInt(prtStr), ipStr, this);
+				
 		}
 		frame.pack();
+		frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 		
 	}
 	private void sendInput(){
 		if(response == JOptionPane.YES_OPTION) {
-			cServ.sendText(inputTextBox.getText()+ "\n");
-			inputTextBox.setText("");
+			cServ.sendText("Server: " + outputTypeBox.getText()+ "\n");
+		//	System.out.println(outputTypeBox.getText());
+			outputTypeBox.setText("");
 		} else if(response == JOptionPane.NO_OPTION) {
-			cClien.sendText(inputTextBox.getText());
-			inputTextBox.setText("");
+			cClien.sendText("Client: " + outputTypeBox.getText()+"\n");
+			outputTypeBox.setText("");
 		}
 	}
 	@Override
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
-		if(e.getKeyCode() == 13) {
+		if(e.getKeyCode()==Event.ENTER) {
 			sendInput();
 		}
+	}
+	public void textBoxAdd(String textAdd) {
+			inputTextBox.append(textAdd);
 	}
 
 	@Override
@@ -94,4 +96,5 @@ public class GUI_For_Chat_App implements KeyListener {
 		// TODO Auto-generated method stub
 		
 	}
+	
 }

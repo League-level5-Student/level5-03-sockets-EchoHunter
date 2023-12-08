@@ -9,7 +9,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-import javax.swing.JOptionPane;
+import _Chat_AppGUI.GUI_For_Chat_App;
 
 public class ChatServer extends Thread {
 	private ServerSocket serSock;
@@ -17,16 +17,17 @@ public class ChatServer extends Thread {
 	private ObjectOutputStream oOS;
 	private ObjectInputStream oIS;
 	private int portNum;
-	public ArrayList<String> inputs;
-
-	public ChatServer(int pnum) throws IOException {
+	private GUI_For_Chat_App gui;
+	
+	public ChatServer(int pnum, GUI_For_Chat_App gui) throws IOException {
 		
 		portNum = pnum;
 		serSock = new ServerSocket(portNum);
+		this.gui = gui;
 	}
 
 	public void run() {
-		inputs = new ArrayList<String>();
+		
 		try {
 			sock = serSock.accept();
 
@@ -36,7 +37,7 @@ public class ChatServer extends Thread {
 			oOS.flush();
 			while(!sock.isClosed()){
 				if(sock.isConnected() && oIS.readObject() != null) {
-				inputs.add((String) oIS.readObject());
+				gui.textBoxAdd("Client: " +(String)oIS.readObject() + "\n");
 				}
 			}
 		} catch (IOException e) {
@@ -64,6 +65,7 @@ public class ChatServer extends Thread {
 		try {
 			if(oOS!=null) {
 			oOS.writeObject(text);
+			gui.textBoxAdd(text);
 			oOS.flush();
 			}
 		} catch (IOException e) {
@@ -71,18 +73,6 @@ public class ChatServer extends Thread {
 			e.printStackTrace();
 		}
 	}
-	public String getText() {
-		try {
-			if(oIS != null) {
-				return (String) oIS.readObject();
-			}
-		}catch(IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
+	
 
 }
