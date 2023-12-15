@@ -31,14 +31,14 @@ public class ChatServer extends Thread {
 		try {
 			sock = serSock.accept();
 
+			
+			
 			oOS = new ObjectOutputStream(sock.getOutputStream());
 			oIS = new ObjectInputStream(sock.getInputStream());
 
 			oOS.flush();
-			while(!sock.isClosed()){
-				if(sock.isConnected() && oIS.readObject() != null) {
-				gui.textBoxAdd("Client: " +(String)oIS.readObject() + "\n");
-				}
+			while(sock.isConnected()){	
+				gui.textBoxAdd((String)oIS.readObject() + "\n");
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

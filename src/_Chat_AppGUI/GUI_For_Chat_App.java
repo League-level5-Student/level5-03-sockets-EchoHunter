@@ -8,6 +8,7 @@ import java.io.IOException;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -21,6 +22,7 @@ public class GUI_For_Chat_App implements KeyListener {
 	JFrame frame;
 	JPanel panel;
 	JTextArea inputTextBox;
+	JScrollPane scroller;
 	JTextField outputTypeBox;
 	Server server;
 	Client client;
@@ -35,6 +37,8 @@ public class GUI_For_Chat_App implements KeyListener {
 		panel = new JPanel();
 		inputTextBox = new JTextArea(20,20);
 		inputTextBox.setEditable(false);
+		scroller = new JScrollPane(inputTextBox);
+		inputTextBox.setLineWrap(true);
 		outputTypeBox = new JTextField(20);
 		outputTypeBox.addKeyListener(this);
 		
@@ -50,14 +54,15 @@ public class GUI_For_Chat_App implements KeyListener {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			cServ.start();
 			JOptionPane.showMessageDialog(null, "Server started at: " + server.getIPAddress() + "\nPort: " + server.getPort());
 			
 		}else {
-			String ipStr = "192.168.1.220"; //= JOptionPane.showInputDialog("Enter the IP Address");
-			String prtStr = "8080";//JOptionPane.showInputDialog("Enter the port number");
+			String ipStr = JOptionPane.showInputDialog("Enter the IP Address");
+			String prtStr = JOptionPane.showInputDialog("Enter the port number");
 			client = new Client(ipStr, Integer.parseInt(prtStr));
 			cClien = new ChatClient(Integer.parseInt(prtStr), ipStr, this);
-				
+			cClien.start();
 		}
 		frame.pack();
 		frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);

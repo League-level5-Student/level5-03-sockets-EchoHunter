@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 import _Chat_AppGUI.GUI_For_Chat_App;
 
-public class ChatClient {
+public class ChatClient extends Thread {
 	private int port;
 	private String ip;
 
@@ -30,9 +30,11 @@ public class ChatClient {
 		try {
 			sockConnect = new Socket(ip, port);
 
+			
+			
 			os = new ObjectOutputStream(sockConnect.getOutputStream());
 			is = new ObjectInputStream(sockConnect.getInputStream());
-
+			
 			os.flush();
 
 		} catch (UnknownHostException e) {
@@ -43,10 +45,9 @@ public class ChatClient {
 			e.printStackTrace();
 		}
 		try {
-			while (!sockConnect.isClosed()) {
-				if (sockConnect.isConnected() && is.readObject() != null) {
-					gui.textBoxAdd("Server: " + (String) is.readObject() + "\n");
-				}
+			while (sockConnect.isConnected()) {
+				System.out.println("while looped");
+					gui.textBoxAdd((String) is.readObject() + "\n");
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
